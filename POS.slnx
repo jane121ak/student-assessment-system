@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="src/Pos.Application/Pos.Application.csproj" />
   <Project Path="src/Pos.Domain/Pos.Domain.csproj" />
 </Solution>
