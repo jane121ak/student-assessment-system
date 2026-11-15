@@ -3,4 +3,5 @@
   <Project Path="src/Pos.Cli/Pos.Cli.csproj" />
   <Project Path="src/Pos.Domain/Pos.Domain.csproj" />
   <Project Path="src/Pos.Infrastructure/Pos.Infrastructure.csproj" />
+  <Project Path="tests/Pos.Tests/Pos.Tests.csproj" />
 </Solution>
