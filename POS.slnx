@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="src/Pos.Application/Pos.Application.csproj" />
   <Project Path="src/Pos.Domain/Pos.Domain.csproj" />
+  <Project Path="src/Pos.Infrastructure/Pos.Infrastructure.csproj" />
 </Solution>
