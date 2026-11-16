@@ -23,6 +23,7 @@ public class EvaluationFactoryTests
 
         Assert.NotEqual(Guid.Empty, evaluation.Id);
         Assert.Equal(student.Id, evaluation.StudentId);
+        Assert.Equal(rubric.Id, evaluation.RubricId);
         Assert.Equal(criterion.Id, evaluation.CriterionId);
         Assert.Equal(new Score(8m), evaluation.Score);
     }
@@ -139,11 +140,7 @@ public class EvaluationFactoryTests
         Assert.Throws<ArgumentNullException>(action);
     }
 
-    private static (
-        Student Student,
-        Rubric Rubric,
-        Criterion Criterion
-    ) CreateValidContext()
+    private static (Student Student, Rubric Rubric, Criterion Criterion) CreateValidContext()
     {
         var student = new Student(
             Guid.NewGuid(),

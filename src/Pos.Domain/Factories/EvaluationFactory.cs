@@ -22,6 +22,6 @@ public sealed class EvaluationFactory
             );
         }
 
-        return new Evaluation(Guid.NewGuid(), student.Id, criterion.Id, score);
+        return new Evaluation(Guid.NewGuid(), student.Id, rubric.Id, criterion.Id, score);
     }
 }
