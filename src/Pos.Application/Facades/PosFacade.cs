@@ -96,6 +96,17 @@ public sealed class PosFacade
         return _rubricService.GetRubrics();
     }
 
+    public void DeleteRubric(Guid rubricId)
+    {
+        _ = _rubricService.GetRubric(rubricId);
+
+        if (HasEvaluations(rubricId))
+            throw new InvalidOperationException(
+                "Нельзя удалить рубрикатор: по нему уже выставлены оценки.");
+
+        _rubricService.DeleteRubric(rubricId);
+    }
+
     public Criterion AddCriterion(
         Guid rubricId,
         string name,
@@ -107,6 +118,23 @@ public sealed class PosFacade
             name,
             maxScore,
             weight);
+    }
+
+    public void DeleteCriterion(
+        Guid rubricId,
+        Guid criterionId)
+    {
+        var rubric = _rubricService.GetRubric(rubricId);
+
+        _ = rubric.GetCriterion(criterionId);
+
+        if (HasEvaluations(rubricId, criterionId))
+            throw new InvalidOperationException(
+                "Нельзя удалить критерий: по нему уже выставлены оценки.");
+
+        _rubricService.DeleteCriterion(
+            rubricId,
+            criterionId);
     }
 
     public IReadOnlyCollection<Criterion> GetCriteria(Guid rubricId)
@@ -181,5 +209,26 @@ public sealed class PosFacade
         exporter.Export(report, destinationPath);
 
         return report;
+    }
+
+    private bool HasEvaluations(
+        Guid rubricId,
+        Guid? criterionId = null)
+    {
+        foreach (var student in _studentService.GetStudents())
+        {
+            var evaluations = _evaluationService.GetEvaluations(
+                student.Id);
+
+            if (evaluations.Any(e =>
+                e.RubricId == rubricId &&
+                (!criterionId.HasValue ||
+                 e.CriterionId == criterionId.Value)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

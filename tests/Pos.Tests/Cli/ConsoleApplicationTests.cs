@@ -100,7 +100,7 @@ public class ConsoleApplicationTests
 
         var application = new ConsoleApplication(
             context.CreateFacade(),
-            new StringReader("2\n0\n"),
+            new StringReader("3\n0\n"),
             output);
 
         application.Run();

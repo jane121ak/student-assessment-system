@@ -26,7 +26,6 @@ public sealed class JsonRubricRepository : IRubricRepository
                 "Rubric already exists.");
 
         records.Add(ToRecord(rubric));
-
         _store.WriteAll(records);
     }
 
@@ -45,7 +44,25 @@ public sealed class JsonRubricRepository : IRubricRepository
                 "Rubric does not exist.");
 
         records[index] = ToRecord(rubric);
+        _store.WriteAll(records);
+    }
 
+    public void Remove(Guid id)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException(
+                "Rubric ID cannot be empty.",
+                nameof(id));
+
+        var records = _store.ReadAll();
+
+        var index = records.FindIndex(r => r.Id == id);
+
+        if (index < 0)
+            throw new KeyNotFoundException(
+                "Rubric does not exist.");
+
+        records.RemoveAt(index);
         _store.WriteAll(records);
     }
 
@@ -82,13 +99,11 @@ public sealed class JsonRubricRepository : IRubricRepository
                     throw new InvalidDataException(
                         "Criterion record cannot be null.");
 
-                var criterion = new Criterion(
+                rubric.AddCriterion(new Criterion(
                     criterionRecord.Id,
                     criterionRecord.Name,
                     new Score(criterionRecord.MaxScore),
-                    new Weight(criterionRecord.Weight));
-
-                rubric.AddCriterion(criterion);
+                    new Weight(criterionRecord.Weight)));
             }
 
             return rubric;
