@@ -7,11 +7,12 @@ public sealed record Weight
 
     public Weight(decimal value)
     {
-        if (value <= 0 || value > 1)
+        if (value <= 0)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(value),
-                "Weight must be greater than 0 and less than or equal to 1."
+                value,
+                "Weight must be greater than zero."
             );
         }
 

@@ -33,6 +33,15 @@ public sealed class Criterion
         ArgumentNullException.ThrowIfNull(maxScore);
         ArgumentNullException.ThrowIfNull(weight);
 
+        if (maxScore.Value <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maxScore),
+                maxScore.Value,
+                "Maximum score must be greater than zero."
+            );
+        }
+
         Id = id;
         Name = name;
         MaxScore = maxScore;

@@ -39,11 +39,11 @@ public class WeightTests
     }
 
     [Fact]
-    public void Constructor_GreaterThanOne_ThrowsException()
+    public void Constructor_GreaterThanOne_CreatesWeight()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => new Weight(1.1m)
-        );
+        var weight = new Weight(1.1m);
+
+        Assert.Equal(1.1m, weight.Value);
     }
 
     [Fact]

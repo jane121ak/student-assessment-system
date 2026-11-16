@@ -84,6 +84,19 @@ public class CriterionTests
         Assert.False(criterion.IsScoreInRange(new Score(11m)));
     }
 
+    [Fact]
+    public void Constructor_ZeroMaxScore_ThrowsException()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Criterion(
+                Guid.NewGuid(),
+                "Домашние задания",
+                new Score(0m),
+                new Weight(0.2m)
+            )
+        );
+    }
+
     private static Criterion CreateCriterion()
     {
         return new Criterion(
