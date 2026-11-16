@@ -41,7 +41,6 @@ public class ConsoleApplicationTests
         Assert.Contains("Студент успешно добавлен", output.ToString());
     }
 
-
     [Fact]
     public void Run_AfterRejectedName_AcceptsValidStudent()
     {
@@ -60,19 +59,12 @@ public class ConsoleApplicationTests
 
         var result = output.ToString();
 
-        Assert.Contains(
-            "Значение не может быть пустым.",
-            result);
-
-        Assert.Contains(
-            "Студент успешно добавлен",
-            result);
-
+        Assert.Contains("Значение не может быть пустым.", result);
+        Assert.Contains("Студент успешно добавлен", result);
         Assert.Contains("Иван Иванов", result);
 
         Assert.Single(context.StudentService.GetStudents());
     }
-
 
     [Fact]
     public void Run_InvalidMenuChoice_Reprompts()
@@ -93,6 +85,24 @@ public class ConsoleApplicationTests
     }
 
     [Fact]
+    public void Run_EvaluationSection_OpensEvaluationMenu()
+    {
+        var context = new ApplicationTestContext();
+        var output = new StringWriter();
+
+        var application = new ConsoleApplication(
+            context.CreateFacade(),
+            new StringReader("3\n0\n0\n"),
+            output);
+
+        application.Run();
+
+        Assert.Contains(
+            "========== ОЦЕНКИ ==========",
+            output.ToString());
+    }
+
+    [Fact]
     public void Run_UnimplementedSection_ShowsMessage()
     {
         var context = new ApplicationTestContext();
@@ -100,7 +110,7 @@ public class ConsoleApplicationTests
 
         var application = new ConsoleApplication(
             context.CreateFacade(),
-            new StringReader("3\n0\n"),
+            new StringReader("4\n0\n"),
             output);
 
         application.Run();
@@ -127,5 +137,4 @@ public class ConsoleApplicationTests
             "Завершение работы",
             output.ToString());
     }
-
 }

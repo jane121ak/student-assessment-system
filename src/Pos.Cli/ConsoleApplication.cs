@@ -10,6 +10,7 @@ public sealed class ConsoleApplication
     private readonly TextWriter _output;
     private readonly StudentMenu _studentMenu;
     private readonly RubricMenu _rubricMenu;
+    private readonly EvaluationMenu _evaluationMenu;
 
     public ConsoleApplication(
         PosFacade facade,
@@ -29,6 +30,11 @@ public sealed class ConsoleApplication
             output);
 
         _rubricMenu = new RubricMenu(
+            facade,
+            _input,
+            output);
+
+        _evaluationMenu = new EvaluationMenu(
             facade,
             _input,
             output);
@@ -70,6 +76,9 @@ public sealed class ConsoleApplication
                     break;
 
                 case 3:
+                    _evaluationMenu.Run();
+                    break;
+
                 case 4:
                     _output.WriteLine(
                         "Раздел пока не реализован.");
