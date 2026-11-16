@@ -27,7 +27,9 @@ internal sealed class ApplicationTestContext
 
         var gradeCalculator = new GradeCalculator();
 
-        StudentService = new StudentService(studentRepository);
+        StudentService = new StudentService(
+            studentRepository,
+            evaluationRepository);
 
         RubricService = new RubricService(rubricRepository);
 
@@ -94,6 +96,13 @@ internal sealed class ApplicationTestContext
         {
             return _students.Values.ToArray();
         }
+
+        public void Remove(Guid id)
+        {
+            if (!_students.Remove(id))
+                throw new KeyNotFoundException(
+                    "Student does not exist.");
+        }
     }
 
     private sealed class InMemoryRubricRepository : IRubricRepository
@@ -118,6 +127,13 @@ internal sealed class ApplicationTestContext
                     "Rubric does not exist.");
 
             _rubrics[rubric.Id] = rubric;
+        }
+
+        public void Remove(Guid id)
+        {
+            if (!_rubrics.Remove(id))
+                throw new KeyNotFoundException(
+                    "Rubric does not exist.");
         }
 
         public Rubric? GetById(Guid id)

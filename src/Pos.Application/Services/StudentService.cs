@@ -6,12 +6,17 @@ namespace Pos.Application.Services;
 public sealed class StudentService
 {
     private readonly IStudentRepository _studentRepository;
+    private readonly IEvaluationRepository _evaluationRepository;
 
-    public StudentService(IStudentRepository studentRepository)
+    public StudentService(
+        IStudentRepository studentRepository,
+        IEvaluationRepository evaluationRepository)
     {
         ArgumentNullException.ThrowIfNull(studentRepository);
+        ArgumentNullException.ThrowIfNull(evaluationRepository);
 
         _studentRepository = studentRepository;
+        _evaluationRepository = evaluationRepository;
     }
 
     public Student AddStudent(string fullName)
@@ -40,5 +45,21 @@ public sealed class StudentService
     public IReadOnlyCollection<Student> GetStudents()
     {
         return _studentRepository.GetAll();
+    }
+
+    public void DeleteStudent(Guid studentId)
+    {
+        var student = GetStudent(studentId);
+
+        var evaluations =
+            _evaluationRepository.GetByStudentId(student.Id);
+
+        if (evaluations.Count > 0)
+        {
+            throw new InvalidOperationException(
+                "Cannot delete a student who has evaluations. Cancel evaluations first.");
+        }
+
+        _studentRepository.Remove(student.Id);
     }
 }

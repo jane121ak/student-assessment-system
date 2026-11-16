@@ -11,16 +11,13 @@ public sealed class RubricService
     public RubricService(IRubricRepository rubricRepository)
     {
         ArgumentNullException.ThrowIfNull(rubricRepository);
-
         _rubricRepository = rubricRepository;
     }
 
     public Rubric CreateRubric()
     {
         var rubric = new Rubric(Guid.NewGuid());
-
         _rubricRepository.Add(rubric);
-
         return rubric;
     }
 
@@ -31,11 +28,9 @@ public sealed class RubricService
         Weight weight)
     {
         if (rubricId == Guid.Empty)
-        {
             throw new ArgumentException(
                 "Rubric ID cannot be empty.",
                 nameof(rubricId));
-        }
 
         ArgumentNullException.ThrowIfNull(maxScore);
         ArgumentNullException.ThrowIfNull(weight);
@@ -49,20 +44,50 @@ public sealed class RubricService
             weight);
 
         rubric.AddCriterion(criterion);
-
         _rubricRepository.Update(rubric);
 
         return criterion;
     }
 
-    public Rubric GetRubric(Guid rubricId)
+    public void DeleteRubric(Guid rubricId)
     {
         if (rubricId == Guid.Empty)
-        {
             throw new ArgumentException(
                 "Rubric ID cannot be empty.",
                 nameof(rubricId));
-        }
+
+        _ = GetRubric(rubricId);
+
+        _rubricRepository.Remove(rubricId);
+    }
+
+    public void DeleteCriterion(
+        Guid rubricId,
+        Guid criterionId)
+    {
+        if (rubricId == Guid.Empty)
+            throw new ArgumentException(
+                "Rubric ID cannot be empty.",
+                nameof(rubricId));
+
+        if (criterionId == Guid.Empty)
+            throw new ArgumentException(
+                "Criterion ID cannot be empty.",
+                nameof(criterionId));
+
+        var rubric = GetRubric(rubricId);
+
+        rubric.RemoveCriterion(criterionId);
+
+        _rubricRepository.Update(rubric);
+    }
+
+    public Rubric GetRubric(Guid rubricId)
+    {
+        if (rubricId == Guid.Empty)
+            throw new ArgumentException(
+                "Rubric ID cannot be empty.",
+                nameof(rubricId));
 
         return _rubricRepository.GetById(rubricId)
             ?? throw new KeyNotFoundException(

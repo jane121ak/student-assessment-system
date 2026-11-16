@@ -43,6 +43,27 @@ public sealed class JsonStudentRepository : IStudentRepository
         return LoadAll();
     }
 
+    public void Remove(Guid id)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException(
+                "Student ID cannot be empty.",
+                nameof(id));
+
+        var records = _store.ReadAll();
+
+        var index = records.FindIndex(
+            record => ToDomain(record).Id == id);
+
+        if (index < 0)
+            throw new KeyNotFoundException(
+                $"Student with ID '{id}' was not found.");
+
+        records.RemoveAt(index);
+
+        _store.WriteAll(records);
+    }
+
     private Student[] LoadAll()
     {
         return _store.ReadAll()

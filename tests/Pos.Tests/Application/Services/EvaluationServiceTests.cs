@@ -350,6 +350,13 @@ public class EvaluationServiceTests
             _rubrics[rubric.Id] = rubric;
         }
 
+        public void Remove(Guid id)
+        {
+            if (!_rubrics.Remove(id))
+                throw new KeyNotFoundException(
+                    "Rubric does not exist.");
+        }
+
         public Rubric? GetById(Guid id)
         {
             return _rubrics.GetValueOrDefault(id);

@@ -9,4 +9,10 @@ public interface IStudentRepository
     Student? GetById(Guid id);
 
     IReadOnlyCollection<Student> GetAll();
+
+    void Remove(Guid id)
+    {
+        throw new NotSupportedException(
+            "Student removal is not supported by this repository.");
+    }
 }

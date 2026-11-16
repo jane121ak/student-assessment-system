@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\Pos.Application\Pos.Application.csproj" />
     <ProjectReference Include="..\..\src\Pos.Domain\Pos.Domain.csproj" />
     <ProjectReference Include="..\..\src\Pos.Infrastructure\Pos.Infrastructure.csproj" />
+	<ProjectReference Include="..\..\src\Pos.Cli\Pos.Cli.csproj" />
   </ItemGroup>
 
   <ItemGroup>

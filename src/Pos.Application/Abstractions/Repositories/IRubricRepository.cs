@@ -8,6 +8,8 @@ public interface IRubricRepository
 
     void Update(Rubric rubric);
 
+    void Remove(Guid id);
+
     Rubric? GetById(Guid id);
 
     IReadOnlyCollection<Rubric> GetAll();
