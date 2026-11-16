@@ -9,6 +9,7 @@ public sealed class ConsoleApplication
     private readonly ConsoleInput _input;
     private readonly TextWriter _output;
     private readonly StudentMenu _studentMenu;
+    private readonly RubricMenu _rubricMenu;
 
     public ConsoleApplication(
         PosFacade facade,
@@ -23,6 +24,11 @@ public sealed class ConsoleApplication
         _output = output;
 
         _studentMenu = new StudentMenu(
+            facade,
+            _input,
+            output);
+
+        _rubricMenu = new RubricMenu(
             facade,
             _input,
             output);
@@ -60,6 +66,9 @@ public sealed class ConsoleApplication
                     break;
 
                 case 2:
+                    _rubricMenu.Run();
+                    break;
+
                 case 3:
                 case 4:
                     _output.WriteLine(

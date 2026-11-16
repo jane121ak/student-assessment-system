@@ -52,15 +52,13 @@ public sealed class ConsoleInput
         }
     }
 
-
     public decimal? ReadDecimal(
         string prompt,
         decimal minimum,
         decimal? maximum = null,
         bool minimumInclusive = true)
     {
-        if (maximum.HasValue && maximum.Value < minimum)
-            throw new ArgumentOutOfRangeException(nameof(maximum));
+        ValidateDecimalRange(minimum, maximum);
 
         while (true)
         {
@@ -69,27 +67,44 @@ public sealed class ConsoleInput
             if (value is null)
                 return null;
 
-            var normalized = value.Trim().Replace(',', '.');
-
-            var isValid = decimal.TryParse(
-                normalized,
-                NumberStyles.AllowLeadingSign |
-                NumberStyles.AllowDecimalPoint,
-                CultureInfo.InvariantCulture,
-                out var result);
-
-            var aboveMinimum = minimumInclusive
-                ? result >= minimum
-                : result > minimum;
-
-            var belowMaximum = !maximum.HasValue ||
-                               result <= maximum.Value;
-
-            if (isValid && aboveMinimum && belowMaximum)
+            if (TryParseDecimal(value, out var result) &&
+                IsInRange(result, minimum, maximum, minimumInclusive))
+            {
                 return result;
+            }
 
-            _output.WriteLine(
-                "Некорректное число или значение вне допустимого диапазона.");
+            PrintInvalidDecimal();
+        }
+    }
+
+    public decimal? ReadDecimalOrCancel(
+        string prompt,
+        decimal minimum,
+        decimal? maximum = null,
+        bool minimumInclusive = true)
+    {
+        ValidateDecimalRange(minimum, maximum);
+
+        while (true)
+        {
+            var value = ReadLine(prompt);
+
+            if (value is null)
+                return null;
+
+            if (value.Trim() == "0")
+            {
+                _output.WriteLine("Ввод отменён.");
+                return null;
+            }
+
+            if (TryParseDecimal(value, out var result) &&
+                IsInRange(result, minimum, maximum, minimumInclusive))
+            {
+                return result;
+            }
+
+            PrintInvalidDecimal();
         }
     }
 
@@ -121,6 +136,44 @@ public sealed class ConsoleInput
         }
     }
 
+    public int? ReadSelectionOrCancel(
+        string prompt,
+        int itemCount)
+    {
+        if (itemCount <= 0)
+            throw new ArgumentOutOfRangeException(nameof(itemCount));
+
+        while (true)
+        {
+            var value = ReadLine(prompt);
+
+            if (value is null)
+                return null;
+
+            var trimmed = value.Trim();
+
+            if (trimmed == "0")
+            {
+                _output.WriteLine("Ввод отменён.");
+                return null;
+            }
+
+            if (int.TryParse(
+                    trimmed,
+                    NumberStyles.None,
+                    CultureInfo.InvariantCulture,
+                    out var selection) &&
+                selection >= 1 &&
+                selection <= itemCount)
+            {
+                return selection;
+            }
+
+            _output.WriteLine(
+                $"Введите номер от 1 до {itemCount} или 0 для отмены.");
+        }
+    }
+
     public int? ReadMenuChoice(string prompt, int maximumChoice)
     {
         if (maximumChoice < 0)
@@ -148,7 +201,6 @@ public sealed class ConsoleInput
                 $"Введите номер от 0 до {maximumChoice}.");
         }
     }
-
 
     public bool? ReadConfirmation(string prompt)
     {
@@ -179,5 +231,49 @@ public sealed class ConsoleInput
                     break;
             }
         }
+    }
+
+    private static bool TryParseDecimal(
+        string value,
+        out decimal result)
+    {
+        var normalized = value.Trim().Replace(',', '.');
+
+        return decimal.TryParse(
+            normalized,
+            NumberStyles.AllowLeadingSign |
+            NumberStyles.AllowDecimalPoint,
+            CultureInfo.InvariantCulture,
+            out result);
+    }
+
+    private static bool IsInRange(
+        decimal value,
+        decimal minimum,
+        decimal? maximum,
+        bool minimumInclusive)
+    {
+        var aboveMinimum = minimumInclusive
+            ? value >= minimum
+            : value > minimum;
+
+        var belowMaximum = !maximum.HasValue ||
+                           value <= maximum.Value;
+
+        return aboveMinimum && belowMaximum;
+    }
+
+    private static void ValidateDecimalRange(
+        decimal minimum,
+        decimal? maximum)
+    {
+        if (maximum.HasValue && maximum.Value < minimum)
+            throw new ArgumentOutOfRangeException(nameof(maximum));
+    }
+
+    private void PrintInvalidDecimal()
+    {
+        _output.WriteLine(
+            "Некорректное число или значение вне допустимого диапазона.");
     }
 }
