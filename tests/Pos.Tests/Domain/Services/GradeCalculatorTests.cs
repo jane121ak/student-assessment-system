@@ -124,6 +124,34 @@ public class GradeCalculatorTests
                 student.Id, rubric, evaluations));
     }
 
+    [Fact]
+    public void Calculate_AfterRejectedStudent_CorrectStudentIsAccepted()
+    {
+        var student = CreateStudent();
+        var anotherStudent = CreateStudent();
+        var rubric = CreateRubric();
+
+        var criterion = AddCriterion(rubric, 10m, 0.2m);
+
+        var evaluations = new[]
+        {
+        CreateEvaluation(student, rubric, criterion, 8m)
+    };
+
+        Assert.Throws<ArgumentException>(() =>
+            _calculator.Calculate(
+                anotherStudent.Id,
+                rubric,
+                evaluations));
+
+        var result = _calculator.Calculate(
+            student.Id,
+            rubric,
+            evaluations);
+
+        Assert.Equal(0.8m, result);
+    }
+
     private static Student CreateStudent()
     {
         return new Student(Guid.NewGuid(), "Иван Иванов");

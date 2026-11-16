@@ -85,6 +85,19 @@ public class EvaluationTests
         Assert.Throws<ArgumentNullException>(action);
     }
 
+    [Fact]
+    public void ChangeScore_AfterRejectedScore_ValidScoreIsAccepted()
+    {
+        var (evaluation, rubric, _) = CreateEvaluation();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            evaluation.ChangeScore(new Score(11m), rubric));
+
+        evaluation.ChangeScore(new Score(8m), rubric);
+
+        Assert.Equal(new Score(8m), evaluation.Score);
+    }
+
     private static (Evaluation Evaluation, Rubric Rubric, Criterion Criterion) CreateEvaluation()
     {
         var student = new Student(
