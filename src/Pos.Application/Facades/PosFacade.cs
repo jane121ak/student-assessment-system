@@ -76,6 +76,11 @@ public sealed class PosFacade
         return _studentService.GetStudents();
     }
 
+    public void DeleteStudent(Guid studentId)
+    {
+        _studentService.DeleteStudent(studentId);
+    }
+
     public Rubric CreateRubric()
     {
         return _rubricService.CreateRubric();

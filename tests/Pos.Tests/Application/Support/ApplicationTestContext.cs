@@ -27,7 +27,9 @@ internal sealed class ApplicationTestContext
 
         var gradeCalculator = new GradeCalculator();
 
-        StudentService = new StudentService(studentRepository);
+        StudentService = new StudentService(
+            studentRepository,
+            evaluationRepository);
 
         RubricService = new RubricService(rubricRepository);
 
@@ -93,6 +95,13 @@ internal sealed class ApplicationTestContext
         public IReadOnlyCollection<Student> GetAll()
         {
             return _students.Values.ToArray();
+        }
+
+        public void Remove(Guid id)
+        {
+            if (!_students.Remove(id))
+                throw new KeyNotFoundException(
+                    "Student does not exist.");
         }
     }
 
