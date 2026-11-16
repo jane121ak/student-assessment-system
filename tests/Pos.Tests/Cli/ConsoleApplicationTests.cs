@@ -116,7 +116,7 @@ public class ConsoleApplicationTests
         application.Run();
 
         Assert.Contains(
-            "Раздел пока не реализован",
+            "ОТЧЁТЫ И РЕЗУЛЬТАТЫ",
             output.ToString());
     }
 

@@ -1,4 +1,4 @@
-﻿using Pos.Application.Facades;
+using Pos.Application.Facades;
 using Pos.Cli.Menus;
 using Pos.Cli.Support;
 
@@ -11,6 +11,7 @@ public sealed class ConsoleApplication
     private readonly StudentMenu _studentMenu;
     private readonly RubricMenu _rubricMenu;
     private readonly EvaluationMenu _evaluationMenu;
+    private readonly ReportMenu _reportMenu;
 
     public ConsoleApplication(
         PosFacade facade,
@@ -35,6 +36,11 @@ public sealed class ConsoleApplication
             output);
 
         _evaluationMenu = new EvaluationMenu(
+            facade,
+            _input,
+            output);
+
+        _reportMenu = new ReportMenu(
             facade,
             _input,
             output);
@@ -80,8 +86,7 @@ public sealed class ConsoleApplication
                     break;
 
                 case 4:
-                    _output.WriteLine(
-                        "Раздел пока не реализован.");
+                    _reportMenu.Run();
                     break;
             }
         }
