@@ -140,6 +140,65 @@ public class EvaluationFactoryTests
         Assert.Throws<ArgumentNullException>(action);
     }
 
+    [Fact]
+    public void Reconstitute_ValidData_PreservesIdentity()
+    {
+        var (student, rubric, criterion) = CreateValidContext();
+        var factory = new EvaluationFactory();
+        var evaluationId = Guid.NewGuid();
+
+        var evaluation = factory.Reconstitute(
+            evaluationId,
+            student.Id,
+            rubric,
+            criterion.Id,
+            new Score(8m));
+
+        Assert.Equal(evaluationId, evaluation.Id);
+        Assert.Equal(student.Id, evaluation.StudentId);
+        Assert.Equal(rubric.Id, evaluation.RubricId);
+        Assert.Equal(criterion.Id, evaluation.CriterionId);
+    }
+
+    [Fact]
+    public void Reconstitute_ScoreAboveMaximum_ThrowsException()
+    {
+        var (student, rubric, criterion) = CreateValidContext();
+        var factory = new EvaluationFactory();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            factory.Reconstitute(
+                Guid.NewGuid(),
+                student.Id,
+                rubric,
+                criterion.Id,
+                new Score(11m)));
+    }
+
+    [Fact]
+    public void Reconstitute_AfterRejectedScore_AcceptsValidScore()
+    {
+        var (student, rubric, criterion) = CreateValidContext();
+        var factory = new EvaluationFactory();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            factory.Reconstitute(
+                Guid.NewGuid(),
+                student.Id,
+                rubric,
+                criterion.Id,
+                new Score(11m)));
+
+        var evaluation = factory.Reconstitute(
+            Guid.NewGuid(),
+            student.Id,
+            rubric,
+            criterion.Id,
+            new Score(8m));
+
+        Assert.Equal(new Score(8m), evaluation.Score);
+    }
+
     private static (Student Student, Rubric Rubric, Criterion Criterion) CreateValidContext()
     {
         var student = new Student(
